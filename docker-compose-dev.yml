@@ -1,0 +1,14 @@
+version: "3.8"
+services:
+  db:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: dev_app
+      POSTGRES_PASSWORD: dev_secret
+      POSTGRES_DB: good_night_dev
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+volumes:
+  db_data:
