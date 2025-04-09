@@ -9,7 +9,113 @@ servers:
     description: Development server
 
 paths:
-
+  /auth/sign_up:
+    post:
+      summary: User Sign-Up (simplified)
+      description: Creates a new user by providing name, email, and password. Returns a newly created user object and optionally a token for immediate use.
+      operationId: signUp
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - email
+                - password
+              properties:
+                name:
+                  type: string
+                  example: "Alice"
+                email:
+                  type: string
+                  format: email
+                  example: "alice@example.com"
+                password:
+                  type: string
+                  example: "SomeP@ssw0rd"
+      responses:
+        '201':
+          description: Sign-up successful, user created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/User'
+                  token:
+                    type: string
+                    description: Optional token (e.g. JWT) for immediate authenticated access
+              example:
+                user:
+                  id: 42
+                  name: "Andi"
+                  email: "andi@example.com"
+                  created_at: "2025-04-09T12:34:56Z"
+                  updated_at: "2025-04-09T12:34:56Z"
+                token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        '409':
+          description: User with the given email already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error_code: "USER_ALREADY_EXISTS"
+                message: "User with this email already exists."
+        '422':
+          description: Validation error (e.g., invalid email format, weak password)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error_code: "INVALID_DATA"
+                message: "Password too short or invalid email."
+  /auth/sign_in:
+    post:
+      summary: User Sign-In
+      description: Authenticates a user with email and password, returning a JWT token on success.
+      operationId: signIn
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Sign-in successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: JWT or other token to be used in Authorization header
+              example:
+                token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Validation error (e.g., email format)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /sleep_records:
     get:
       summary: List all current user’s sleep records (Paginated)
