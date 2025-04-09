@@ -1,4 +1,5 @@
 class ApplicationController < ActionController::Base
+  protect_from_forgery with: :null_session
   rescue_from BaseError, with: :handle_base_error
 
   private
@@ -8,6 +9,6 @@ class ApplicationController < ActionController::Base
     render json: {
       error_code: exception.error_code,
       message: exception.message
-    }, status: exception.http_status
+    }, status: exception.http_status,content_type: "application/json"
   end
 end
