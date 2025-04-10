@@ -3,7 +3,7 @@
 ## Entities
 
 ### User
-- **Fields:** `id`, `name`
+- **Fields:** `id`, `name`, `email`
 - A user can have many “followings” and many “followers.”
 
 ### Relationship (for "follow"/"unfollow")
@@ -26,10 +26,10 @@
 - **Listing Sleep Records**:
     - `GET /sleep_records` retrieves all your sleep records, ordered by creation time.
 - **Following**:
-    - `POST /users/:id/follow` to follow.
-    - `DELETE /users/:id/follow` to unfollow.
+    - `POST /users/me/follow/:user_id` to follow.
+    - `DELETE /users/me/follow/:user_id` to unfollow.
 - **See Sleep Records of All Followed Users (last week)**:
-    - `GET /users/:id/following_sleep_records` returns the sleep records from the previous 7 days of all users that `:id` follows. These are sorted by duration (`end_time - start_time`).
+    - `GET /users/me/following_sleep_records` returns the sleep records from the previous 7 days of all users that `:id` follows. These are sorted by duration (`end_time - start_time`).
 
 ---
 
