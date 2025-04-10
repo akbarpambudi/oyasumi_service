@@ -277,7 +277,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-  /users/{id}/follow:
+  /users/me/follow/{id}:
     post:
       summary: Follow a user
       description: Current user follows the user specified by `{id}`.
@@ -363,7 +363,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-  /users/{id}/following_sleep_records:
+  /users/me/following_sleep_records:
     get:
       summary: Get sleep records from last week of all followed users (Paginated)
       description: Returns all completed sleep records (end_time not null) of users that `{id}` follows, within the past 7 days. Results are sorted by duration (descending) by default. Paginated.
