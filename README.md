@@ -30,8 +30,11 @@ The application follows a clean architecture pattern with:
 
 ### Infrastructure Layer
 - PostgreSQL database
-- Redis caching
-- Background jobs
+- Redis caching with LRU (Least Recently Used) mechanism
+  - Configurable cache size (default: 1000 items)
+  - Automatic eviction of least recently used items
+  - Atomic operations for thread safety
+  - Separate caching for individual records and user collections
 
 ### Interface Layer
 - RESTful endpoints
@@ -174,9 +177,13 @@ API documentation is available in OpenAPI format at `docs/api/open-api.yaml`. Yo
 ## ⚡ Performance Considerations
 
 - Database indexes for efficient queries
-- Redis caching for frequently accessed data
+- Redis caching with LRU eviction policy:
+  - Caches individual sleep records and user collections
+  - Maintains access order using Redis sorted sets
+  - Automatically evicts least recently used items when cache is full
+  - Atomic operations ensure thread safety
+  - Configurable cache size and TTL
 - Pagination for large result sets
-- Background jobs for heavy computations
 - Database transactions for data consistency
 
 ## 🤝 Contributing
