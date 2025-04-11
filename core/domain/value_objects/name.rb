@@ -16,7 +16,7 @@ module Domain
 
       def validate!
         if @value.nil? || @value.strip.empty?
-          raise Domain::Errors::InvalidNameError, message: "Name cannot be empty."
+          raise Domain::Errors::InvalidNameError.new(message: "Name cannot be empty.")
         end
       end
 

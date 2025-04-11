@@ -7,6 +7,7 @@ module Domain
 
       def initialize(hashed_value:)
         @hashed_value = hashed_value.to_s.strip
+        validate_hash_format!
       end
 
       # Compares a plain-text password to the stored hash
@@ -19,6 +20,14 @@ module Domain
 
       def ==(other)
         other.is_a?(EncryptedPassword) && other.hashed_value == hashed_value
+      end
+
+      private
+
+      def validate_hash_format!
+        BCrypt::Password.new(@hashed_value)
+      rescue BCrypt::Errors::InvalidHash
+        raise Domain::Errors::InvalidPasswordHashError
       end
     end
   end

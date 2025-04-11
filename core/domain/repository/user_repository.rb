@@ -14,6 +14,10 @@ module Domain
       def save(user_entity)
         raise NotImplementedError.new(message: "UserRepository.save(user_entity)is not implemented")
       end
+
+      def find_all_paginated(page:, per_page:)
+        raise NotImplementedError.new(message: "UserRepository.find_all_paginated is not implemented")
+      end
     end
   end
 end
