@@ -5,7 +5,7 @@ module Domain
         super(
           message: message,
           error_code: "INVALID_CREDENTIALS",
-          http_status: 401
+          status_code: 401
         )
       end
     end

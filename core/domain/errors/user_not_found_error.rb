@@ -5,7 +5,7 @@ module Domain
         super(
           message: message,
           error_code: "USER_NOT_FOUND",
-          http_status: 404
+          status_code: 404
         )
       end
     end

@@ -5,7 +5,7 @@ module Domain
         super(
           message: message,
           error_code: "INVALID_PASSWORD_HASH",
-          http_status: 422
+          status_code: 422
         )
       end
     end
