@@ -1,0 +1,39 @@
+#!/bin/bash
+set -e
+
+# Function to check if a service is healthy
+check_service_health() {
+  local service=$1
+  local max_attempts=30
+  local attempt=1
+
+  echo "Waiting for $service to be healthy..."
+  while [ $attempt -le $max_attempts ]; do
+    if docker compose -f docker-compose.dev.yml ps $service | grep -q "healthy"; then
+      echo "$service is healthy!"
+      return 0
+    fi
+    echo "Attempt $attempt/$max_attempts: $service not healthy yet, waiting..."
+    sleep 2
+    attempt=$((attempt + 1))
+  done
+
+  echo "Error: $service failed to become healthy after $max_attempts attempts"
+  return 1
+}
+
+# Start services if not running
+if ! docker compose -f docker-compose.dev.yml ps | grep -q "running"; then
+  echo "Starting services..."
+  docker compose -f docker-compose.dev.yml up -d
+fi
+
+# Check health of services
+check_service_health "postgres"
+check_service_health "redis"
+
+# Prepare test database
+echo "Preparing test database..."
+rbenv exec bundle exec rails db:test:prepare
+
+echo "All test dependencies are ready!" 

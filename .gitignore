@@ -6,9 +6,14 @@
 
 # Ignore bundler config.
 /.bundle
+/vendor/bundle
 
 # Ignore all environment files.
 /.env*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # Ignore all logfiles and tempfiles.
 /log/*
@@ -28,7 +33,43 @@
 !/tmp/storage/
 !/tmp/storage/.keep
 
+# Ignore public assets
 /public/assets
+/public/packs
+/public/packs-test
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
+/config/credentials.yml.enc
+
+# Ignore test coverage reports
+/coverage/
+
+# Ignore IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Ignore node modules and yarn files
+/node_modules
+/yarn-error.log
+yarn-debug.log*
+.yarn-integrity
+
+# Ignore database dumps
+*.sql
+*.sqlite3
+
+# Ignore Docker volumes
+/docker/volumes/
+
+# Ignore Spring files
+/spring/*.pid
+
+# Ignore rbenv files
+.rbenv-version
+
+# Ignore simplecov files
+coverage/
