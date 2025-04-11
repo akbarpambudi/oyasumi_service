@@ -32,6 +32,16 @@ module Infrastructure
           raise Domain::Errors::EmailAlreadyRegisteredError
         end
 
+        def find_all_paginated(page:, per_page:)
+          offset = (page - 1) * per_page
+          records = ::UserRecord.order(created_at: :desc)
+                               .offset(offset)
+                               .limit(per_page)
+          total_count = ::UserRecord.count
+
+          [records.map { |r| map_to_domain(r) }, total_count]
+        end
+
         private
 
         def map_to_domain(record)
@@ -41,7 +51,9 @@ module Infrastructure
             name: record.name,
             encrypted_password: Domain::ValueObjects::EncryptedPassword.new(
               hashed_value: record.encrypted_password
-            )
+            ),
+            created_at: record.created_at,
+            updated_at: record.updated_at
           )
         end
       end

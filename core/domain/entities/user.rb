@@ -1,13 +1,15 @@
 module Domain
   module Entities
     class User
-      attr_reader :id, :name, :email, :encrypted_password
+      attr_reader :id, :name, :email, :encrypted_password, :created_at, :updated_at
 
-      def initialize(id: nil, name:, email:, encrypted_password:)
+      def initialize(id: nil, name:, email:, encrypted_password:, created_at: nil, updated_at: nil)
         @id = id
         self.name  = name
         self.email = email
         self.encrypted_password = encrypted_password
+        @created_at = created_at
+        @updated_at = updated_at
       end
 
       def name=(new_name)

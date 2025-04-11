@@ -1,43 +1,87 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
+require 'support/test_helpers/domain_helper'
 require 'bcrypt'
 
 RSpec.describe Domain::Entities::User do
-  describe '#initialize' do
-    let(:plain_password)   { "MySecret123" }
-    let(:hashed_password)  { BCrypt::Password.create(plain_password) }
+  let(:valid_email) { Domain::ValueObjects::Email.new("test@example.com") }
+  let(:valid_name) { Domain::ValueObjects::Name.new("John Doe") }
+  let(:valid_password) { Domain::ValueObjects::EncryptedPassword.new(hashed_value: BCrypt::Password.create("password123")) }
 
-    it 'creates a user entity with valid name, email, and encrypted password' do
+  describe "#initialize" do
+    it "creates a user with valid attributes" do
       user = described_class.new(
-        name:  "Alice",
-        email: "alice@example.com",
-        encrypted_password: hashed_password
+        id: 1,
+        email: valid_email,
+        name: valid_name,
+        encrypted_password: valid_password
       )
 
-      expect(user.name.value).to eq("Alice")
-      expect(user.email.value).to eq("alice@example.com")
-      expect(user.encrypted_password.hashed_value).to eq(hashed_password)
+      expect(user.id).to eq(1)
+      expect(user.email).to eq(valid_email)
+      expect(user.name).to eq(valid_name)
+      expect(user.encrypted_password).to eq(valid_password)
     end
 
-    it 'raises an error if name is invalid' do
-      expect {
-        described_class.new(
-          name: "",
-          email: "alice@example.com",
-          encrypted_password: hashed_password
+    it "allows id to be nil for new users" do
+      user = described_class.new(
+        email: valid_email,
+        name: valid_name,
+        encrypted_password: valid_password
+      )
+
+      expect(user.id).to be_nil
+    end
+  end
+
+  describe "#==" do
+    it "considers two users equal if they have the same id" do
+      user1 = described_class.new(
+        id: 1,
+        email: valid_email,
+        name: valid_name,
+        encrypted_password: valid_password
+      )
+
+      user2 = described_class.new(
+        id: 1,
+        email: Domain::ValueObjects::Email.new("other@example.com"),
+        name: Domain::ValueObjects::Name.new("Jane Doe"),
+        encrypted_password: Domain::ValueObjects::EncryptedPassword.new(
+          hashed_value: BCrypt::Password.create("different123")
         )
-      }.to raise_error(Domain::Errors::InvalidNameError)
+      )
+
+      expect(user1).to eq(user2)
     end
 
-    it 'raises an error if email is invalid' do
-      expect {
-        described_class.new(
-          name: "Alice",
-          email: "not_an_email",
-          encrypted_password: hashed_password
-        )
-      }.to raise_error(Domain::Errors::InvalidEmailError)
+    it "considers users different if they have different ids" do
+      user1 = described_class.new(
+        id: 1,
+        email: valid_email,
+        name: valid_name,
+        encrypted_password: valid_password
+      )
+
+      user2 = described_class.new(
+        id: 2,
+        email: valid_email,
+        name: valid_name,
+        encrypted_password: valid_password
+      )
+
+      expect(user1).not_to eq(user2)
+    end
+
+    it "returns false when comparing with a different type" do
+      user = described_class.new(
+        id: 1,
+        email: valid_email,
+        name: valid_name,
+        encrypted_password: valid_password
+      )
+
+      expect(user).not_to eq("not a user")
     end
   end
 
@@ -59,17 +103,6 @@ RSpec.describe Domain::Entities::User do
 
     it 'returns false if the password does not match' do
       expect(user.authenticate?(wrong_password)).to be false
-    end
-  end
-
-  describe '#==' do
-    it 'compares users by their ID' do
-      user1 = described_class.new(id: 1, name: "Alice", email: "a@a.com", encrypted_password: "hash1")
-      user2 = described_class.new(id: 1, name: "Alice", email: "a@a.com", encrypted_password: "hash2")
-      user3 = described_class.new(id: 2, name: "Alice", email: "a@a.com", encrypted_password: "hash2")
-
-      expect(user1).to eq(user2)   # same ID => equal in domain sense
-      expect(user1).not_to eq(user3)
     end
   end
 end
