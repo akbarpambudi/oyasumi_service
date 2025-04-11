@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Exit on error
+set -e
+
+echo "🛑 Stopping Good Night development environment..."
+
+# Stop and remove containers
+echo "🐳 Stopping containers..."
+docker-compose down
+
+# Remove volumes if requested
+if [ "$1" == "--clean" ]; then
+  echo "🧹 Removing volumes..."
+  docker-compose down -v
+fi
+
+echo "✅ Teardown completed successfully!" 
