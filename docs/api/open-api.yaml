@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Good Night Application API
-  description: RESTful API for sleep tracking, following/unfollowing users, and viewing followed users' sleep records (with pagination).
+  description: RESTful API for sleep tracking, following/unfollowing users, and viewing followed users' sleep records.
   version: 1.0.0
 
 servers:
@@ -9,6 +9,58 @@ servers:
     description: Development server
 
 paths:
+  /users:
+    get:
+      summary: List all users
+      description: Retrieve all users, ordered by creation time.
+      operationId: listUsers
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          description: Page number (1-based index)
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: per_page
+          in: query
+          description: Number of records per page
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        '200':
+          description: A list of User objects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+              example:
+                - id: 1
+                  name: "Alice"
+                  email: "alice@example.com"
+                  created_at: "2025-04-08T11:10:00Z"
+                  updated_at: "2025-04-08T11:10:00Z"
+                - id: 2
+                  name: "Bob"
+                  email: "bob@example.com"
+                  created_at: "2025-04-08T11:15:00Z"
+                  updated_at: "2025-04-08T11:15:00Z"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   /auth/sign_up:
     post:
       summary: User Sign-Up (simplified)
@@ -118,7 +170,7 @@ paths:
                 $ref: '#/components/schemas/Error'
   /sleep_records:
     get:
-      summary: List all current user’s sleep records (Paginated)
+      summary: List all current user's sleep records (Paginated)
       description: Retrieve all sleep records for the authenticated/current user, ordered by creation time, in a paginated format.
       operationId: listSleepRecords
       security:
@@ -227,7 +279,7 @@ paths:
   /sleep_records/{id}:
     patch:
       summary: Clock Out
-      description: Update an existing SleepRecord’s end_time to the current time.
+      description: Update an existing SleepRecord's end_time to the current time.
       operationId: updateSleepRecord
       security:
         - bearerAuth: []
@@ -373,7 +425,7 @@ paths:
       parameters:
         - name: id
           in: path
-          description: The ID of the user whose “following list” you want to check.
+          description: The ID of the user whose "following list" you want to check.
           required: true
           schema:
             type: integer
@@ -402,7 +454,7 @@ paths:
             default: 20
       responses:
         '200':
-          description: A paginated list of followed users’ SleepRecords from the past 7 days
+          description: A paginated list of followed users' SleepRecords from the past 7 days
           content:
             application/json:
               schema:
