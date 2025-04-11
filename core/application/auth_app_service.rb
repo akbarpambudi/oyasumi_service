@@ -36,8 +36,10 @@ module Application
 
     def authenticate_token(token:)
       decoded_token = Infrastructure::Services::JwtService.decode(token)
-      @user_repository.find_by_id(decoded_token[:user_id])
-    rescue Domain::Errors::InvalidTokenError, Domain::Errors::UserNotFoundError => e
+      raise Domain::Errors::InvalidTokenError unless decoded_token && decoded_token["user_id"]
+
+      @user_repository.find_by_id(decoded_token["user_id"])
+    rescue Domain::Errors::UserNotFoundError => e
       raise Domain::Errors::InvalidTokenError
     end
   end

@@ -5,7 +5,7 @@ module Domain
         super(
           message: message,
           error_code: "EMAIL_ALREADY_REGISTERED",
-          http_status: 409
+          status_code: 409
         )
       end
     end
